@@ -31,9 +31,9 @@ public abstract class Screen {
         //Setup an OpenGL context of version 3.2
         try {
             PixelFormat pixelFormat = new PixelFormat();
-            ContextAttribs contextAttribs = new ContextAttribs(3, 2)
-                    .withForwardCompatible(true)
-                    .withProfileCore(true);
+            ContextAttribs contextAttribs = new ContextAttribs(3, 1);
+                    /*.withForwardCompatible(true)
+                    .withProfileCore(true);*/
 
             Display.setDisplayMode(new DisplayMode(width, height));
             Display.setTitle(title);
@@ -65,7 +65,7 @@ public abstract class Screen {
     }
 
     public void run() {
-        while (!Display.isCloseRequested() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
+        while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
             //Clear the color and depth buffers.
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
             controller.handleInput();
