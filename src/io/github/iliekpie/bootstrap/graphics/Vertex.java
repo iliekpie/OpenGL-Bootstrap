@@ -1,11 +1,12 @@
 package io.github.iliekpie.bootstrap.graphics;
 
+import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
+
 public class Vertex {
     //Vertex data
-    protected float[] xyzw = new float[] {0f, 0f, 0f, 1f};
-    //protected float[] rgba = new float[] {1f, 1f, 1f, 1f};
+    protected Vector4f xyzw = new Vector4f();
     protected Color color = new Color();
-
 
     //Element size in bytes
     public static final int elementBytes = 4;
@@ -15,17 +16,17 @@ public class Vertex {
     public static final int colorElementCount = 4;
 
     //Bytes per parameter
-    public static final int positionBytesCount = positionElementCount * elementBytes;
+    public static final int positionByteCount = positionElementCount * elementBytes;
     public static final int colorByteCount = colorElementCount * elementBytes;
 
     //Byte offsets per parameter
     public static final int positionByteOffset = 0;
-    public static final int colorByteOffset = positionBytesCount; //positionByteOffset + positionBytesCount
+    public static final int colorByteOffset = positionByteCount; //positionByteOffset + positionBytesCount
 
     //The amount of elements that a vertex has
     public static int elementCount = positionElementCount + colorElementCount;
     //The size of a vertex in bytes, like in C/C++: sizeof(Vertex)
-    public static int stride = positionBytesCount + colorByteCount;
+    public static int stride = positionByteCount + colorByteCount;
 
     //Setters
     public Vertex setXYZ(float x, float y, float z) {
@@ -39,7 +40,12 @@ public class Vertex {
     }
 
     public Vertex setXYZW(float x, float y, float z, float w) {
-        this.xyzw = new float[] {x, y, z, w};
+        this.xyzw = new Vector4f(x, y, z, w);
+        return this;
+    }
+
+    public Vertex setPosition(Vector3f position) {
+        this.xyzw = new Vector4f(position.getX(), position.getY(), position.getZ(), 1);
         return this;
     }
 
@@ -59,10 +65,10 @@ public class Vertex {
         int i = 0;
 
         //Insert XYZW elements
-        out[i++] = this.xyzw[0];
-        out[i++] = this.xyzw[1];
-        out[i++] = this.xyzw[2];
-        out[i++] = this.xyzw[3];
+        out[i++] = this.xyzw.getX();
+        out[i++] = this.xyzw.getY();
+        out[i++] = this.xyzw.getZ();
+        out[i++] = this.xyzw.getW();
 
         //Insert RGBA elements
         out[i++] = this.color.getRed();
@@ -73,8 +79,12 @@ public class Vertex {
         return out;
     }
 
+    public Vector3f getPosition() {
+        return new Vector3f(this.xyzw.getX(), this.xyzw.getY(), this.xyzw.getZ());
+    }
+
     public float[] getXYZW() {
-        return new float[] {this.xyzw[0], this.xyzw[1], this.xyzw[2], this.xyzw[3]};
+        return new float[]{this.xyzw.getX(), this.xyzw.getY(), this.xyzw.getZ(), this.xyzw.getW()};
     }
 
     public float[] getRGBA() {

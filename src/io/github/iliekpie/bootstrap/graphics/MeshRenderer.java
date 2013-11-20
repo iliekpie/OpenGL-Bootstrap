@@ -4,6 +4,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
@@ -17,36 +18,13 @@ public class MeshRenderer {
     private int vertexDataObjectID = -1;
     private int indexObjectID = -1;
 
+    private int vaoID = -1;
+
     private int vertexLocation = -1;
-    private int indexLocation = -1;
+    private int colorLocation = -1;
 
-    //Buffers
-    private FloatBuffer vertexBuffer;
-    private ShortBuffer indexBuffer;
+    public MeshRenderer() {
 
-    public MeshRenderer(Mesh mesh) {
-        fillVertexBuffer(mesh.getVertices());
-        fillIndexBuffer(mesh.getIndices());
-    }
-
-    private void fillVertexBuffer(List<Vertex> vertices) {
-
-        //Put the vertex data into the float buffer.
-        vertexBuffer = BufferUtils.createFloatBuffer(vertices.size() * Vertex.elementCount);
-        for (Vertex vertex : vertices) {
-            vertexBuffer.put(vertex.getXYZW());
-            vertexBuffer.put(vertex.getRGBA());
-        }
-        vertexBuffer.flip();
-    }
-
-    private void fillIndexBuffer(short[] indices) {
-        indexCount = indices.length;
-
-        //Put the indices into a buffer for OpenGL.
-        indexBuffer = BufferUtils.createShortBuffer(indexCount);
-        indexBuffer.put(indices);
-        indexBuffer.flip();
     }
 
     /**
@@ -55,9 +33,19 @@ public class MeshRenderer {
      */
     public void bind(ShaderProgram program) {
         shaderProgram = program;
+    }
 
+    public void loadMesh(Mesh mesh) {
+        vaoID = GL30.glGenVertexArrays();
+        GL30.glBindVertexArray(vaoID);
+
+        bindVertexBuffer(getVertexBuffer(mesh.getVertices()));
+        bindIndexBuffer(getIndexBuffer(mesh.getIndices()));
+    }
+
+    private void bindVertexBuffer(FloatBuffer vertexBuffer) {
         vertexLocation = shaderProgram.getAttributeLocation("in_VertexPosition");
-        indexLocation = shaderProgram.getAttributeLocation("in_Color");
+        colorLocation = shaderProgram.getAttributeLocation("in_Color");
 
         //Create and select a VBO.
         vertexDataObjectID = GL15.glGenBuffers();
@@ -66,38 +54,55 @@ public class MeshRenderer {
 
         //Put the positions in the "in_VertexPosition" attribute location.
         GL20.glVertexAttribPointer(vertexLocation, 4, GL11.GL_FLOAT, false, Vertex.stride, 0);
+
         //Put the colors in in the "in_Color" attribute location.
-        GL20.glVertexAttribPointer(indexLocation, 4, GL11.GL_FLOAT, false, Vertex.stride, Vertex.elementBytes * 4);
+        GL20.glVertexAttribPointer(colorLocation, 4, GL11.GL_FLOAT, false, Vertex.stride, Vertex.elementBytes * 4);
 
-        //Deselect the VBO.
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        GL20.glEnableVertexAttribArray(vertexLocation);
+        GL20.glEnableVertexAttribArray(colorLocation);
+    }
 
+    private void bindIndexBuffer(ShortBuffer indexBuffer) {
         //Create a VBO for indices and select it.
         indexObjectID = GL15.glGenBuffers();
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indexObjectID);
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL15.GL_STATIC_DRAW);
-        //Deselect the VBO.
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+        //Bind the VBO.
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indexObjectID);
+    }
+
+    private FloatBuffer getVertexBuffer(List<Vertex> vertices) {
+
+        //Put the vertex data into the float buffer.
+        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertices.size() * Vertex.elementCount);
+        for (Vertex vertex : vertices) {
+            vertexBuffer.put(vertex.getXYZW());
+            vertexBuffer.put(vertex.getRGBA());
+        }
+        vertexBuffer.flip();
+
+        return vertexBuffer;
+    }
+
+    private ShortBuffer getIndexBuffer(short[] indices) {
+        indexCount = indices.length;
+
+        //Put the indices into a buffer for OpenGL.
+        ShortBuffer indexBuffer = BufferUtils.createShortBuffer(indexCount);
+        indexBuffer.put(indices);
+        indexBuffer.flip();
+
+        return indexBuffer;
     }
 
     /**
-     * Draws the object using OpenGL. It will clean itself up.
+     * Draws the object using Triangles
      */
     public void draw() {
-        //Enable attributes (position and color)
-        GL20.glEnableVertexAttribArray(vertexLocation);
-        GL20.glEnableVertexAttribArray(indexLocation);
-
-        //Bind to the index VBO (contains the order of the vertices)
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indexObjectID);
+        GL30.glBindVertexArray(vaoID);
 
         //Draw the vertices
         GL11.glDrawElements(GL11.GL_TRIANGLES, indexCount, GL11.GL_UNSIGNED_SHORT, 0);
-
-        //Reset attributes and buffer
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-        GL20.glDisableVertexAttribArray(vertexLocation);
-        GL20.glDisableVertexAttribArray(indexLocation);
     }
 
     /**
@@ -106,7 +111,7 @@ public class MeshRenderer {
     public void destroy() {
         //Disable the VBO index
         GL20.glDisableVertexAttribArray(vertexLocation);
-        GL20.glDisableVertexAttribArray(indexLocation);
+        GL20.glDisableVertexAttribArray(colorLocation);
 
         //Delete the vertex VBO
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
@@ -115,5 +120,7 @@ public class MeshRenderer {
         //Delete the index VBO
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
         GL15.glDeleteBuffers(indexObjectID);
+
+        GL30.glDeleteVertexArrays(vaoID);
     }
 }

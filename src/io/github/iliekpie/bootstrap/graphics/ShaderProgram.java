@@ -9,14 +9,16 @@ import org.lwjgl.opengl.GL40;
 import org.lwjgl.util.vector.Matrix4f;
 
 import java.nio.FloatBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ShaderProgram {
     private final int programID;
     private int[] shaders = new int[5];
+    private Map<String, Integer> attributes = new HashMap<String, Integer>(4);
+    private Map<String, Integer> uniforms = new HashMap<String, Integer>();
 
     private FloatBuffer matrix44Buffer = null;
-
 
     /**
      * Creates a shader program.
@@ -138,7 +140,10 @@ public class ShaderProgram {
      * @return The location of the uniform
      */
     public int getUniformLocation(String uniformName) {
-        return GL20.glGetUniformLocation(programID, uniformName);
+        if (uniforms.get(uniformName) == null) {
+            uniforms.put(uniformName, GL20.glGetUniformLocation(programID, uniformName));
+        }
+        return uniforms.get(uniformName);
     }
 
     /**
@@ -164,6 +169,9 @@ public class ShaderProgram {
      * @return (int) The location of the attribute
      */
     public int getAttributeLocation(String attributeName) {
-        return GL20.glGetAttribLocation(programID, attributeName);
+        if (attributes.get(attributeName) == null) {
+            attributes.put(attributeName, GL20.glGetAttribLocation(programID, attributeName));
+        }
+        return attributes.get(attributeName);
     }
 }

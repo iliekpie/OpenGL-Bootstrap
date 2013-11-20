@@ -1,6 +1,7 @@
 package io.github.iliekpie.bootstrap.input;
 
 import io.github.iliekpie.bootstrap.graphics.Camera;
+import io.github.iliekpie.bootstrap.util.Timer;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -13,6 +14,7 @@ public class CameraController {
     private boolean inverted = false;
 
     private boolean wireframe = false;
+    private Timer timer = new Timer();
 
     /**
      * Create a controller for a First Person camera
@@ -64,6 +66,9 @@ public class CameraController {
         final float mouseSensitivity = 0.5f;
         final float yawSensitivity = (float) Display.getWidth() / Display.getHeight() * mouseSensitivity;
         final float pitchSensitivity = (float) Display.getHeight() / Display.getWidth() * mouseSensitivity;
+
+        camera.yaw(dx * yawSensitivity);
+        camera.pitch(dy * pitchSensitivity);
     }
 
     private void handleMouseClick() {
@@ -78,13 +83,26 @@ public class CameraController {
         //todo: interpolation - queue movement?
         final float movementSpeed = 1.5f;
         final float runModifier = 2.0f;
-        float distance = getDeltaTime() * movementSpeed;
+        float distance = timer.getDeltaTime() * movementSpeed;
 
         //unbuffered input
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
             //Move faster.
             distance *= runModifier;
         }
+        if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+            camera.moveForward(distance);
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+            camera.moveBackward(distance);
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+            camera.moveLeft(distance);
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+            camera.moveRight(distance);
+        }
+
 
         if(Keyboard.next()) {
             if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
@@ -96,18 +114,4 @@ public class CameraController {
             }
         }
     }
-
-    //Timer functions for frame-independent movement
-    private long getTime() {
-        return (Sys.getTime() * 1000) / Sys.getTimerResolution();
-    }
-
-    private float getDeltaTime() {
-        long currentTime = getTime();
-        float delta = (float) (currentTime - lastTime);
-        lastTime = currentTime;
-
-        return (delta/1000);
-    }
-
 }

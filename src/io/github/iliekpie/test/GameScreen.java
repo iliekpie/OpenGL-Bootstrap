@@ -6,32 +6,51 @@ import io.github.iliekpie.bootstrap.util.Transformation;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-public class GameScreen extends Screen {
+import java.util.ArrayList;
+import java.util.List;
 
-    Renderable cube;
+public class GameScreen extends Screen {
+    //switch to scene and put in main screen?
+    protected List<Renderable> renderables = new ArrayList<Renderable>();
+
+    Renderable quadcube;
+    Renderable sphere;
 
     public GameScreen(int width, int height) {
         super(width, height, "test");
-        camera.moveTo(new Vector3f(0.5f, 0.5f, -5.0f));
-        camera.lookAt(new Vector3f(0, 0, 0));
-        cube = new Cube(shaderProgram);
+        camera.moveTo(new Vector3f(0, 0f, 7.0f));
+        quadcube = new QuadCube(4, shaderProgram);
+        quadcube.transform(new Vector3f(6, 0, 0), new Vector3f());
+        renderables.add(quadcube);
+        sphere = new IcoSphere(1, shaderProgram);
+        renderables.add(sphere);
     }
 
     protected void render() {
-        shaderProgram.setUniformMatrix(
-                shaderProgram.getUniformLocation("MVP"),
-                false,
-                Matrix4f.mul(
-                        cube.getModelMatrix(),
-                        camera.getCombinedMatrix(),
-                        null
-                )
-        );
-
-        cube.draw();
+        for (Renderable renderable : renderables) {
+            shaderProgram.setUniformMatrix(
+                    shaderProgram.getUniformLocation("MVP"),
+                    false,
+                    Matrix4f.mul(
+                            camera.getCombinedMatrix(),
+                            renderable.getModelMatrix(),
+                            null
+                    )
+            );
+            renderable.draw();
+        }
     }
 
-    protected void tick() {
-        Transformation.applyLocalTransformation(new Vector3f(), new Vector3f(0, (float) Math.toRadians(0.5), 0), cube.getModelMatrix());
+    protected void tick(float delta) {
+       // camera.translate(new Vector3f(0, 0f, delta));
+    }
+
+    @Override
+    protected void onScreenClose() {
+        super.onScreenClose();
+        for (Renderable renderable : renderables) {
+            renderable.destroy();
+        }
+        System.exit(0);
     }
 }

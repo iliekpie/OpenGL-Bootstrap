@@ -78,4 +78,17 @@ public class Color {
     public void setAlpha(float value) {
         alpha = clampValue(value);
     }
+
+    public static Color interpolate(Color naught, Color prime, float alpha) {
+        return new Color(
+            interpolate(naught.getRed(), prime.getRed(), alpha),
+            interpolate(naught.getGreen(), prime.getGreen(), alpha),
+            interpolate(naught.getBlue(), prime.getBlue(), alpha),
+            interpolate(naught.getAlpha(), prime.getAlpha(), alpha)
+        );
+    }
+
+    private static float interpolate(float naught, float prime, float alpha) {
+        return naught + (prime - naught) * alpha;
+    }
 }

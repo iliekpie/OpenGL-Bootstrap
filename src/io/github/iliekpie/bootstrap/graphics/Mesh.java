@@ -1,6 +1,7 @@
 package io.github.iliekpie.bootstrap.graphics;
 
 import io.github.iliekpie.bootstrap.graphics.Vertex;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 public class Mesh {
     private List<Vertex> vertices = new ArrayList<Vertex>(256);
     private List<Short> indices = new ArrayList<Short>(4096);
+    private List<Vector3f> normals = new ArrayList<Vector3f>();
 
     public Mesh() {
 
@@ -29,6 +31,10 @@ public class Mesh {
         return (short)(vertices.size()-1); //Last element of the list _should_ be the new vertex's index.
     }
 
+    public void setVertices(List<Vertex> vertices) {
+        this.vertices = vertices;
+    }
+
     /**
      * Adds the triangle's 3 vertices to the index list.
      * @param v1 Vertex 1
@@ -43,6 +49,10 @@ public class Mesh {
 
     public List<Vertex> getVertices() {
         return vertices;
+    }
+
+    public Vertex getVertex(short index) {
+        return vertices.get(index);
     }
 
     public short[] getIndices() {

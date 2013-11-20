@@ -3,6 +3,7 @@ package io.github.iliekpie.bootstrap.graphics;
 import io.github.iliekpie.bootstrap.input.CameraController;
 import io.github.iliekpie.bootstrap.util.FPSCounter;
 import io.github.iliekpie.bootstrap.util.FileUtils;
+import io.github.iliekpie.bootstrap.util.Timer;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.*;
@@ -13,6 +14,7 @@ public abstract class Screen {
             Display.setTitle("FPS: " + fps);
         }
     };
+    private Timer timer = new Timer();
 
     protected CameraController controller;
     protected Camera camera;
@@ -31,9 +33,9 @@ public abstract class Screen {
         //Setup an OpenGL context of version 3.2
         try {
             PixelFormat pixelFormat = new PixelFormat();
-            ContextAttribs contextAttribs = new ContextAttribs(3, 1);
-                    /*.withForwardCompatible(true)
-                    .withProfileCore(true);*/
+            ContextAttribs contextAttribs = new ContextAttribs(3, 2)
+                    .withForwardCompatible(true)
+                    .withProfileCore(true);
 
             Display.setDisplayMode(new DisplayMode(width, height));
             Display.setTitle(title);
@@ -48,9 +50,9 @@ public abstract class Screen {
         //Set the background color
         GL11.glClearColor(0.4f, 0.6f, 0.9f, 0.0f);
 
-        /*GL11.glCullFace(GL11.GL_BACK);
+        GL11.glCullFace(GL11.GL_BACK);
         GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);*/
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
     }
 
     private void setupShaders() {
@@ -68,13 +70,18 @@ public abstract class Screen {
         while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
             //Clear the color and depth buffers.
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+            if (Display.wasResized()) {
+                reshapeDisplay(Display.getWidth(), Display.getHeight());
+            }
+
             controller.handleInput();
-            tick();
+            tick(timer.getDeltaTime());
             draw();
             counter.tick();
             Display.update();
             Display.sync(60);
         }
+        onScreenClose();
     }
 
     private void draw() {
@@ -88,7 +95,16 @@ public abstract class Screen {
         shaderProgram.disable();
     }
 
-    protected abstract void tick();
+    private void reshapeDisplay(int width, int height) {
+        camera.update(width, height);
+        GL11.glViewport(0, 0, width, height);
+    }
+
+    protected abstract void tick(float delta);
 
     protected abstract void render();
+
+    protected void onScreenClose() {
+        shaderProgram.destroy();
+    }
 }
