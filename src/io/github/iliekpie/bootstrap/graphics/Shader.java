@@ -4,6 +4,9 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.GL40;
 
+/**
+ * Allows the shader type to be stored in an array in ShaderProgram
+ */
 public enum Shader {
     VERTEX(GL20.GL_VERTEX_SHADER),
     FRAGMENT(GL20.GL_FRAGMENT_SHADER),

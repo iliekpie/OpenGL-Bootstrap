@@ -59,6 +59,7 @@ public class IcoSphere extends Renderable {
         mesh.addTriangle(v7, v2, v11);
     }
 
+    // Creates a unit sphere
     private void toSphere(float radius) {
         for (Vertex vertex : mesh.getVertices()) {
             Vector3f position = vertex.getPosition();

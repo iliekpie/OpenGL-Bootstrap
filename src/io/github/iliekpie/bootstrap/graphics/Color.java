@@ -79,6 +79,13 @@ public class Color {
         alpha = clampValue(value);
     }
 
+    /**
+     * Returns the interpolated color between two states
+     * @param naught Original color
+     * @param prime Future color
+     * @param alpha Current ratio between states
+     * @return Interpolated color
+     */
     public static Color interpolate(Color naught, Color prime, float alpha) {
         return new Color(
             interpolate(naught.getRed(), prime.getRed(), alpha),
@@ -88,6 +95,7 @@ public class Color {
         );
     }
 
+    // Returns a linearly interpolated value - move into separate class?
     private static float interpolate(float naught, float prime, float alpha) {
         return naught + (prime - naught) * alpha;
     }

@@ -28,9 +28,16 @@ public class ShaderProgram {
         programID = GL20.glCreateProgram();
     }
 
+    /**
+     * Attaches a shader to the program.
+     * Remember to call link() after.
+     * @param code The shader in a single String
+     * @param shader Shader type
+     */
     public void addShader(String code, Shader shader) {
         try {
             final int shaderID = compileShader(code, shader.getType());
+            // May need to change to a map to use more than one vertex shader (common functions)
             shaders[shader.getIndex()] = shaderID;
             GL20.glAttachShader(programID, shaderID);
         } catch (LWJGLException e) {
@@ -38,6 +45,10 @@ public class ShaderProgram {
         }
     }
 
+    /**
+     * Links the program to all its components (shaders).
+     * @throws LWJGLException
+     */
     public void link() throws LWJGLException {
         //Link the program
         GL20.glLinkProgram(programID);
@@ -136,6 +147,7 @@ public class ShaderProgram {
 
     /**
      * Gets the location of the specified uniform name.
+     * Checks if the uniform has already been looked up, and returns that value if found - potential performance increase. TODO: find out if it's worth it
      * @param uniformName The name of the uniform
      * @return The location of the uniform
      */
@@ -165,6 +177,7 @@ public class ShaderProgram {
 
     /**
      * Gets the location of the specified attribute name.
+     * Checks if the attribute has already been looked up, and returns that value if found - potential performance increase. TODO: find out if it's worth it
      * @param attributeName The name of the attribute
      * @return (int) The location of the attribute
      */

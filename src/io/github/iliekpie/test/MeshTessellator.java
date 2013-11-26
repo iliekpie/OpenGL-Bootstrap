@@ -8,7 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
 public class MeshTessellator {
     private Mesh tempMesh = new Mesh();
 
-    public short getSubVertex(Vertex v1, Vertex v2) {
+    private short getSubVertex(Vertex v1, Vertex v2) {
         Vector3f subVector = Vector3f.add(v1.getPosition(), v2.getPosition(), null);
         subVector.scale(0.5f);
         return tempMesh.addVertex(
@@ -17,6 +17,13 @@ public class MeshTessellator {
         );
     }
 
+    /**
+     * Tessellates a mesh the specified number of iterations.
+     * This is a recursive function.
+     * @param mesh Original mesh
+     * @param iterations Number of times to tessellate the mesh
+     * @return Tessellated mesh
+     */
     public Mesh subdivide(Mesh mesh, int iterations) {
         if (iterations == 0) {
             return mesh;
@@ -25,10 +32,17 @@ public class MeshTessellator {
         return subdivide(subdivide(mesh), iterations);
     }
 
+    /**
+     * Returns a tessellated mesh.
+     * @param mesh Original mesh
+     * @return Tessellated mesh
+     */
     public Mesh subdivide(Mesh mesh) {
         tempMesh = new Mesh();
         tempMesh.setVertices(mesh.getVertices());
         short[] indices = mesh.getIndices();
+
+        // for each triangle, create 4
         for (int i = 0; i < indices.length; i += 3) {
             short i1 = indices[i];
             short i2 = indices[i + 1];

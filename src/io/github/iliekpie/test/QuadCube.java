@@ -61,6 +61,7 @@ public class QuadCube extends Renderable {
         mesh.addTriangle(bottomRightFront, bottomRightBack, bottomLeftBack);
     }
 
+    // Creates a unit sphere
     private void toSphere() {
         for (Vertex vertex : mesh.getVertices()) {
             Vector3f position = vertex.getPosition();

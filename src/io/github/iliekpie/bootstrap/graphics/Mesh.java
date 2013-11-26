@@ -23,14 +23,21 @@ public class Mesh {
         return vertexIDs;
     }
 
+    /**
+     * Adds the vertex to the mesh.
+     * Attempts to reduce vertex duplicates by only adding new vertices if they do not already exist.
+     * @param vertex Vertex to be added
+     * @return Index of the vertex
+     */
     public short addVertex(Vertex vertex) {
         if(vertices.contains(vertex)) {
             return (short)vertices.indexOf(vertex);
         }
         vertices.add(vertex);
-        return (short)(vertices.size()-1); //Last element of the list _should_ be the new vertex's index.
+        return (short)(vertices.size()-1); //Last element of the list should be the new vertex's index.
     }
 
+    // Overwrite all vertices
     public void setVertices(List<Vertex> vertices) {
         this.vertices = vertices;
     }

@@ -5,6 +5,11 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class FileUtils {
+    /**
+     * Returns a file's contents as a String.
+     * @param filename The location of the file, including the filename
+     * @return (String) The contents of the file
+     */
     public static String loadFile(String filename) {
         String text = null;
 

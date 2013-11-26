@@ -3,6 +3,7 @@ package io.github.iliekpie.bootstrap.graphics;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+//TODO: Refactor to allow textures/normals?
 public class Vertex {
     //Vertex data
     protected Vector4f xyzw = new Vector4f();

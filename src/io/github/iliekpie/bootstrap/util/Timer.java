@@ -13,7 +13,7 @@ public class Timer {
         return (Sys.getTime() * 1000) / Sys.getTimerResolution();
     }
 
-    //returns ms?
+    //returns seconds
     public float getDeltaTime() {
         long currentTime = getTime();
         float delta = (float) (currentTime - lastTime);

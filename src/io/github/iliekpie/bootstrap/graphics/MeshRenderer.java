@@ -35,7 +35,12 @@ public class MeshRenderer {
         shaderProgram = program;
     }
 
+    /**
+     * Loads a mesh's data into the GPU
+     * @param mesh Mesh to be loaded
+     */
     public void loadMesh(Mesh mesh) {
+        // Bind a VAO so we can just load it without having to worry about other states
         vaoID = GL30.glGenVertexArrays();
         GL30.glBindVertexArray(vaoID);
 
@@ -43,6 +48,7 @@ public class MeshRenderer {
         bindIndexBuffer(getIndexBuffer(mesh.getIndices()));
     }
 
+    // TODO: do not limit to vertex and color
     private void bindVertexBuffer(FloatBuffer vertexBuffer) {
         vertexLocation = shaderProgram.getAttributeLocation("in_VertexPosition");
         colorLocation = shaderProgram.getAttributeLocation("in_Color");

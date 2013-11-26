@@ -47,7 +47,7 @@ public abstract class Screen {
             System.exit(-1);
         }
 
-        //Set the background color
+        //Set the background color to a nice bluish color.
         GL11.glClearColor(0.4f, 0.6f, 0.9f, 0.0f);
 
         GL11.glCullFace(GL11.GL_BACK);
@@ -57,6 +57,7 @@ public abstract class Screen {
 
     private void setupShaders() {
         shaderProgram = new ShaderProgram();
+        //TODO: move this out
         shaderProgram.addShader(FileUtils.loadFile("shaders/BasicProjection.vert"), Shader.VERTEX);
         shaderProgram.addShader(FileUtils.loadFile("shaders/BasicProjection.frag"), Shader.FRAGMENT);
         try {
@@ -66,6 +67,10 @@ public abstract class Screen {
         }
     }
 
+    /**
+     * Main game loop
+     * TODO: implement proper timestep, don't hardcode the ESC key
+     */
     public void run() {
         while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
             //Clear the color and depth buffers.
@@ -78,12 +83,14 @@ public abstract class Screen {
             tick(timer.getDeltaTime());
             draw();
             counter.tick();
+
             Display.update();
             Display.sync(60);
         }
         onScreenClose();
     }
 
+    //
     private void draw() {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
@@ -100,8 +107,10 @@ public abstract class Screen {
         GL11.glViewport(0, 0, width, height);
     }
 
+    // Override for logic ticks
     protected abstract void tick(float delta);
 
+    // Override to draw
     protected abstract void render();
 
     protected void onScreenClose() {

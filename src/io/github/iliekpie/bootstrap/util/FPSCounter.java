@@ -11,8 +11,17 @@ public abstract class FPSCounter {
         lastFPSCheck = Sys.getTime();
     }
 
+    //returns ms
+    private long getTime() {
+        return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+    }
+
+    /**
+     * Increments a counter every tick and calculates FPS every second.
+     * Call this function every frame.
+     */
     public void tick() {
-        if ((Sys.getTime() - lastFPSCheck) > 1000L) {
+        if ((getTime() - lastFPSCheck) > 1000L) {
             fps = frames;
             onFPSUpdate(fps);
 
