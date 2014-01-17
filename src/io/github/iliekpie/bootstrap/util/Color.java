@@ -1,4 +1,4 @@
-package io.github.iliekpie.bootstrap.graphics;
+package io.github.iliekpie.bootstrap.util;
 
 public class Color {
     private float red = 1.0f;

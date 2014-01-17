@@ -1,8 +1,7 @@
 package io.github.iliekpie.test;
 
-import io.github.iliekpie.bootstrap.graphics.Color;
-import io.github.iliekpie.bootstrap.graphics.Mesh;
-import io.github.iliekpie.bootstrap.graphics.Vertex;
+import io.github.iliekpie.bootstrap.graphics.data.Mesh;
+import io.github.iliekpie.bootstrap.graphics.data.Vertex;
 import org.lwjgl.util.vector.Vector3f;
 
 public class MeshTessellator {
@@ -13,7 +12,6 @@ public class MeshTessellator {
         subVector.scale(0.5f);
         return tempMesh.addVertex(
                 new Vertex().setPosition(subVector)
-                        .setColor(Color.interpolate(v1.getColor(), v2.getColor(), 0.5f))
         );
     }
 

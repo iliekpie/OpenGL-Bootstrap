@@ -1,4 +1,4 @@
-package io.github.iliekpie.bootstrap.graphics;
+package io.github.iliekpie.bootstrap.graphics.data;
 
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;

@@ -2,7 +2,6 @@ package io.github.iliekpie.bootstrap.graphics;
 
 import io.github.iliekpie.bootstrap.input.CameraController;
 import io.github.iliekpie.bootstrap.util.FPSCounter;
-import io.github.iliekpie.bootstrap.util.FileUtils;
 import io.github.iliekpie.bootstrap.util.Timer;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -16,10 +15,10 @@ public abstract class Screen {
     };
     private Timer timer = new Timer();
 
+    protected ShaderManager shaderPrograms = new ShaderManager();
+
     protected CameraController controller;
     protected Camera camera;
-
-    protected ShaderProgram shaderProgram;
 
     public Screen(int width, int height, String title) { //swap to context/options class?
         setupDisplay(width, height, title);
@@ -55,18 +54,6 @@ public abstract class Screen {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
     }
 
-    private void setupShaders() {
-        shaderProgram = new ShaderProgram();
-        //TODO: move this out
-        shaderProgram.addShader(FileUtils.loadFile("shaders/BasicProjection.vert"), Shader.VERTEX);
-        shaderProgram.addShader(FileUtils.loadFile("shaders/BasicProjection.frag"), Shader.FRAGMENT);
-        try {
-            shaderProgram.link();
-        } catch (LWJGLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
     /**
      * Main game loop
      * TODO: implement proper timestep, don't hardcode the ESC key
@@ -90,16 +77,9 @@ public abstract class Screen {
         onScreenClose();
     }
 
-    //
     private void draw() {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-
-        //Set the shader program as the currently used one.
-        shaderProgram.use();
-
         render();
-
-        shaderProgram.disable();
     }
 
     private void reshapeDisplay(int width, int height) {
@@ -113,7 +93,9 @@ public abstract class Screen {
     // Override to draw
     protected abstract void render();
 
+    protected abstract void setupShaders();
+
     protected void onScreenClose() {
-        shaderProgram.destroy();
+        shaderPrograms.destroyAll();
     }
 }

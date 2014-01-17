@@ -1,9 +1,9 @@
 package io.github.iliekpie.test;
 
-import io.github.iliekpie.bootstrap.graphics.Color;
+import io.github.iliekpie.bootstrap.util.Color;
 import io.github.iliekpie.bootstrap.graphics.Renderable;
 import io.github.iliekpie.bootstrap.graphics.ShaderProgram;
-import io.github.iliekpie.bootstrap.graphics.Vertex;
+import io.github.iliekpie.bootstrap.graphics.data.Vertex;
 import org.lwjgl.util.vector.Vector3f;
 
 public class QuadCube extends Renderable {
@@ -18,23 +18,21 @@ public class QuadCube extends Renderable {
     private void buildMesh() {
         addCube();
         MeshTessellator tessellator = new MeshTessellator();
-        mesh = tessellator.subdivide(mesh, 5);
-        toSphere();
+        //mesh = tessellator.subdivide(mesh, 5);
+        //toSphere();
+        mesh.calculateNormals();
     }
 
     private void addCube() {
-        final Color black = new Color(0, 0, 0);
-        final Color white = new Color(1f, 1f, 1f);
+        short topLeftFront      = mesh.addVertex(new Vertex().setXYZ(1, 1, -1));
+        short topRightFront     = mesh.addVertex(new Vertex().setXYZ(-1, 1, -1));
+        short bottomLeftFront   = mesh.addVertex(new Vertex().setXYZ(1, -1, -1));
+        short bottomRightFront  = mesh.addVertex(new Vertex().setXYZ(-1, -1, -1));
 
-        short topLeftFront      = mesh.addVertex(new Vertex().setXYZ(1, 1, -1).setColor(white));
-        short topRightFront     = mesh.addVertex(new Vertex().setXYZ(-1, 1, -1).setColor(black));
-        short bottomLeftFront   = mesh.addVertex(new Vertex().setXYZ(1, -1, -1).setColor(black));
-        short bottomRightFront  = mesh.addVertex(new Vertex().setXYZ(-1, -1, -1).setColor(black));
-
-        short topLeftBack       = mesh.addVertex(new Vertex().setXYZ(1, 1, 1).setColor(black));
-        short topRightBack      = mesh.addVertex(new Vertex().setXYZ(-1, 1, 1).setColor(black));
-        short bottomLeftBack    = mesh.addVertex(new Vertex().setXYZ(-1, -1, 1).setColor(black));
-        short bottomRightBack   = mesh.addVertex(new Vertex().setXYZ(1, -1, 1).setColor(white));
+        short topLeftBack       = mesh.addVertex(new Vertex().setXYZ(1, 1, 1));
+        short topRightBack      = mesh.addVertex(new Vertex().setXYZ(-1, 1, 1));
+        short bottomLeftBack    = mesh.addVertex(new Vertex().setXYZ(-1, -1, 1));
+        short bottomRightBack   = mesh.addVertex(new Vertex().setXYZ(1, -1, 1));
 
         //back
         mesh.addTriangle(bottomLeftBack, bottomRightBack, topLeftBack);

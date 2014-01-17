@@ -1,5 +1,6 @@
 package io.github.iliekpie.bootstrap.graphics;
 
+import io.github.iliekpie.bootstrap.graphics.data.Shader;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.GL11;
@@ -84,13 +85,15 @@ public class ShaderProgram {
         //if info/warnings are found, append it to our shader log
         String infoLog = GL20.glGetShaderInfoLog(shaderID,
                 GL20.glGetShaderi(shaderID, GL20.GL_INFO_LOG_LENGTH));
-        if (infoLog!=null && infoLog.trim().length()!=0)
+        if (infoLog!=null && infoLog.trim().length()!=0) {
             System.err.println(getTypeName(type) + ": " + infoLog + "\n");
+        }
 
         //if the compiling was unsuccessful, throw an exception
-        if (GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE)
+        if (GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
             throw new LWJGLException("Failure in compiling " + getTypeName(type)
                     + ". Error log:\n" + infoLog);
+        }
 
         return shaderID;
     }

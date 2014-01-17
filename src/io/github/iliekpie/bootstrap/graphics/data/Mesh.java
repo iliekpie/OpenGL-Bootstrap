@@ -1,6 +1,5 @@
-package io.github.iliekpie.bootstrap.graphics;
+package io.github.iliekpie.bootstrap.graphics.data;
 
-import io.github.iliekpie.bootstrap.graphics.Vertex;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
@@ -9,7 +8,6 @@ import java.util.List;
 public class Mesh {
     private List<Vertex> vertices = new ArrayList<Vertex>(256);
     private List<Short> indices = new ArrayList<Short>(4096);
-    private List<Vector3f> normals = new ArrayList<Vector3f>();
 
     public Mesh() {
 
@@ -70,5 +68,35 @@ public class Mesh {
         }
 
         return tempIndices;
+    }
+
+    public void calculateNormals() {
+        //for each triangle: add calculate face normal and add it to each relevant vertex
+        for (int i = 0; i < indices.size(); i += 3) {
+            Vertex[] faceVertices = {
+                    vertices.get(indices.get(i)),
+                    vertices.get(indices.get(i + 1)),
+                    vertices.get(indices.get(i + 2))};
+            Vector3f faceNormal = calculateFaceNormal(faceVertices[0], faceVertices[1], faceVertices[2]);
+            //faceNormal.scale(10);
+            /*for (Vertex vertex : faceVertices) {
+                Vector3f.add(vertex.normal, faceNormal, vertex.normal);
+                System.out.println("added " + faceNormal.toString() + " to vertex " + vertex.normal.toString());
+            }*/
+        }
+        for (Vertex vertex : vertices) {
+            if(vertex.normal.length() > 1) {
+                vertex.normal.normalise();
+                //System.out.println("normalized " + vertex.toString());
+            }
+            //System.out.println(vertex.normal.toString());
+        }
+    }
+
+    private Vector3f calculateFaceNormal(Vertex A, Vertex B, Vertex C) {
+        return (Vector3f)Vector3f.cross(
+                Vector3f.sub(A.getPosition(), B.getPosition(), null),
+                Vector3f.sub(B.getPosition(), C.getPosition(), null),
+                null).normalise();
     }
 }

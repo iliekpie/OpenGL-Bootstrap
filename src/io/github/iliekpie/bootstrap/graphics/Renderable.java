@@ -1,5 +1,6 @@
 package io.github.iliekpie.bootstrap.graphics;
 
+import io.github.iliekpie.bootstrap.graphics.data.Mesh;
 import io.github.iliekpie.bootstrap.util.Transformation;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
@@ -25,12 +26,12 @@ public abstract class Renderable {
      * Renders the mesh - if it isn't bound yet, load it and then draw it.
      * This allows us to generate the mesh in the constructor of the subclass without .
      */
-    public void draw() {
+    public void draw(int type) {
         if(!bound) {
             renderer.loadMesh(mesh);
             bound = true;
         }
-        renderer.draw();
+        renderer.draw(type);
     }
 
     public Matrix4f getModelMatrix() {
