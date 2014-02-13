@@ -4,17 +4,14 @@ import io.github.iliekpie.bootstrap.graphics.Renderable;
 import io.github.iliekpie.bootstrap.graphics.Screen;
 import io.github.iliekpie.bootstrap.graphics.ShaderProgram;
 import io.github.iliekpie.bootstrap.graphics.data.Shader;
-import io.github.iliekpie.bootstrap.graphics.data.Vertex;
 import io.github.iliekpie.bootstrap.util.FileUtils;
-import io.github.iliekpie.bootstrap.util.Transformation;
-import org.lwjgl.BufferUtils;
+import io.github.iliekpie.test.data.IcoSphere;
+import io.github.iliekpie.test.data.QuadCube;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +31,7 @@ public class GameScreen extends Screen {
     }
 
     protected void render() {
-        shaderPrograms.setActiveProgram("BasicRender");
+        shaderPrograms.setActiveProgram("LightingTest");
         drawRenderables(GL11.GL_TRIANGLES);
         shaderPrograms.setActiveProgram("NormalVisualization");
         drawRenderables(GL11.GL_POINTS);
@@ -83,6 +80,16 @@ public class GameScreen extends Screen {
             System.out.println(e.getMessage());
         }
         shaderPrograms.addProgram("NormalVisualization", debugProgram);
+
+        ShaderProgram lightingProgram = new ShaderProgram();
+        lightingProgram.addShader(FileUtils.loadFile("shaders/render/LightingTest.vert"), Shader.VERTEX);
+        lightingProgram.addShader(FileUtils.loadFile("shaders/render/LightingTest.frag"), Shader.FRAGMENT);
+        try {
+            lightingProgram.link();
+        } catch (LWJGLException e) {
+            System.out.println(e.getMessage());
+        }
+        shaderPrograms.addProgram("LightingTest", lightingProgram);
     }
 
     @Override

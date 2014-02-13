@@ -2,6 +2,7 @@ package io.github.iliekpie.test;
 
 import io.github.iliekpie.bootstrap.graphics.data.Mesh;
 import io.github.iliekpie.bootstrap.graphics.data.Vertex;
+import io.github.iliekpie.bootstrap.util.Interpolation;
 import org.lwjgl.util.vector.Vector3f;
 
 public class MeshTessellator {
@@ -12,6 +13,7 @@ public class MeshTessellator {
         subVector.scale(0.5f);
         return tempMesh.addVertex(
                 new Vertex().setPosition(subVector)
+                        .setUV(Interpolation.linear(v1.getTexCoords(), v2.getTexCoords(), 0.5f))
         );
     }
 
@@ -37,6 +39,7 @@ public class MeshTessellator {
      */
     public Mesh subdivide(Mesh mesh) {
         tempMesh = new Mesh();
+        tempMesh.setMaterial(mesh.getMaterial());
         tempMesh.setVertices(mesh.getVertices());
         short[] indices = mesh.getIndices();
 

@@ -60,6 +60,11 @@ public class Vertex {
         return this;
     }
 
+    public Vertex setUV(Vector2f uv) {
+        this.uv = uv;
+        return this;
+    }
+
     /*public Vertex setRGB(float r, float g, float b) {
         this.color.setRGB(r, g, b);
         return this;
@@ -116,6 +121,10 @@ public class Vertex {
 
     public float[] getUV() {
         return new float[]{this.uv.getX(), this.uv.getY()};
+    }
+
+    public Vector2f getTexCoords() {
+        return new Vector2f(this.uv.getX(), this.uv.getY());
     }
 
     /*public float[] getRGBA() {

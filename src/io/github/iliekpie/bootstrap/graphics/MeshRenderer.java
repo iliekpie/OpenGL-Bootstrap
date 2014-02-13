@@ -1,12 +1,10 @@
 package io.github.iliekpie.bootstrap.graphics;
 
+import io.github.iliekpie.bootstrap.graphics.data.Material;
 import io.github.iliekpie.bootstrap.graphics.data.Mesh;
 import io.github.iliekpie.bootstrap.graphics.data.Vertex;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.*;
 
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
@@ -19,12 +17,14 @@ public class MeshRenderer {
     private int indexCount = -1;
     private int vertexDataObjectID = -1;
     private int indexObjectID = -1;
+    private int textureObjectID = -1;
 
     private int vaoID = -1;
 
     private int vertexLocation = -1;
     private int normalLocation = -1;
     private int texCoordLocation = -1;
+    private int textureLocation = -1;
 
     public MeshRenderer() {
 
@@ -49,6 +49,7 @@ public class MeshRenderer {
 
         bindVertexBuffer(getVertexBuffer(mesh.getVertices()));
         bindIndexBuffer(getIndexBuffer(mesh.getIndices()));
+        bindMaterial(mesh.getMaterial());
     }
 
     // TODO: do not limit to vertex and color
@@ -108,12 +109,34 @@ public class MeshRenderer {
         return indexBuffer;
     }
 
+    private void bindMaterial(Material material) {
+        //TODO: Support mulitple textures
+        textureObjectID = GL11.glGenTextures();
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureObjectID);
+
+        //Setup wrap mode
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+
+        //Setup texture scaling filtering
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA,
+                material.getTexture().getWidth(), material.getTexture().getHeight(), 0,
+                GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, material.getTexture().getData());
+
+    }
+
     /**
      * Draws the object using the specified type
      */
     public void draw(int type) {
         GL30.glBindVertexArray(vaoID);
 
+        //Set the texture TODO: support multiple textures
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureObjectID);
         //Draw the vertices
         GL11.glDrawElements(type, indexCount, GL11.GL_UNSIGNED_SHORT, 0);
     }

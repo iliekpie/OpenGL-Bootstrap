@@ -8,6 +8,7 @@ import java.util.List;
 public class Mesh {
     private List<Vertex> vertices = new ArrayList<Vertex>(256);
     private List<Short> indices = new ArrayList<Short>(4096);
+    private Material material = new Material();
 
     public Mesh() {
 
@@ -78,18 +79,14 @@ public class Mesh {
                     vertices.get(indices.get(i + 1)),
                     vertices.get(indices.get(i + 2))};
             Vector3f faceNormal = calculateFaceNormal(faceVertices[0], faceVertices[1], faceVertices[2]);
-            //faceNormal.scale(10);
-            /*for (Vertex vertex : faceVertices) {
+            for (Vertex vertex : faceVertices) {
                 Vector3f.add(vertex.normal, faceNormal, vertex.normal);
-                System.out.println("added " + faceNormal.toString() + " to vertex " + vertex.normal.toString());
-            }*/
+            }
         }
         for (Vertex vertex : vertices) {
             if(vertex.normal.length() > 1) {
                 vertex.normal.normalise();
-                //System.out.println("normalized " + vertex.toString());
             }
-            //System.out.println(vertex.normal.toString());
         }
     }
 
@@ -98,5 +95,13 @@ public class Mesh {
                 Vector3f.sub(A.getPosition(), B.getPosition(), null),
                 Vector3f.sub(B.getPosition(), C.getPosition(), null),
                 null).normalise();
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 }
