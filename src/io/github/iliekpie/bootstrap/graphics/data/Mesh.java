@@ -8,10 +8,16 @@ import java.util.List;
 public class Mesh {
     private List<Vertex> vertices = new ArrayList<Vertex>(256);
     private List<Short> indices = new ArrayList<Short>(4096);
-    private Material material = new Material();
+    private Texture[] textures = new Texture[]{ new NullTexture(), null, null };
 
     public Mesh() {
 
+    }
+
+    public Mesh(Mesh instance) {
+        this.vertices = instance.vertices;
+        this.indices = instance.indices;
+        this.textures = instance.textures;
     }
 
     public short[] addVertices(Vertex[] vertices) {
@@ -97,11 +103,19 @@ public class Mesh {
                 null).normalise();
     }
 
-    public void setMaterial(Material material) {
-        this.material = material;
+    public void setTexture(Texture texture, int type) {
+        this.textures[type] = texture;
     }
 
-    public Material getMaterial() {
-        return material;
+    public Texture getTexture(int type) {
+        return textures[type];
+    }
+
+    public void setTextures(Texture[] textures) {
+        this.textures = textures;
+    }
+
+    public Texture[] getTextures() {
+        return new Texture[]{textures[0], textures[1], textures[2]};
     }
 }

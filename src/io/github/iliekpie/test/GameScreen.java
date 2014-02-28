@@ -5,8 +5,7 @@ import io.github.iliekpie.bootstrap.graphics.Screen;
 import io.github.iliekpie.bootstrap.graphics.ShaderProgram;
 import io.github.iliekpie.bootstrap.graphics.data.Shader;
 import io.github.iliekpie.bootstrap.util.FileUtils;
-import io.github.iliekpie.test.data.IcoSphere;
-import io.github.iliekpie.test.data.QuadCube;
+import io.github.iliekpie.test.data.models.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
@@ -16,11 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameScreen extends Screen {
-    //switch to scene and put in main screen?
     protected List<Renderable> renderables = new ArrayList<Renderable>();
 
     public GameScreen(int width, int height) {
         super(width, height, "test");
+        //TODO: switch to scene/level class
         shaderPrograms.setActiveProgram("BasicRender");
         camera.moveTo(new Vector3f(0, 0f, 7.0f));
         Renderable quadcube = new QuadCube(4, shaderPrograms.getActiveProgram());
@@ -28,10 +27,16 @@ public class GameScreen extends Screen {
         renderables.add(quadcube);
         Renderable sphere = new IcoSphere(1, shaderPrograms.getActiveProgram());
         renderables.add(sphere);
+        Renderable pyramid = new TriangleThing(shaderPrograms.getActiveProgram());
+        pyramid.transform(new Vector3f(-2, 0, 0), new Vector3f());
+        renderables.add(pyramid);
+        Renderable cube = new Cube(shaderPrograms.getActiveProgram());
+        cube.transform(new Vector3f(0, -5, 0), new Vector3f());
+        renderables.add(cube);
     }
 
     protected void render() {
-        shaderPrograms.setActiveProgram("LightingTest");
+        shaderPrograms.setActiveProgram("Textured");
         drawRenderables(GL11.GL_TRIANGLES);
         shaderPrograms.setActiveProgram("NormalVisualization");
         drawRenderables(GL11.GL_POINTS);
@@ -81,15 +86,15 @@ public class GameScreen extends Screen {
         }
         shaderPrograms.addProgram("NormalVisualization", debugProgram);
 
-        ShaderProgram lightingProgram = new ShaderProgram();
-        lightingProgram.addShader(FileUtils.loadFile("shaders/render/LightingTest.vert"), Shader.VERTEX);
-        lightingProgram.addShader(FileUtils.loadFile("shaders/render/LightingTest.frag"), Shader.FRAGMENT);
+        ShaderProgram texturedProgram = new ShaderProgram();
+        texturedProgram.addShader(FileUtils.loadFile("shaders/render/Textured.vert"), Shader.VERTEX);
+        texturedProgram.addShader(FileUtils.loadFile("shaders/render/Textured.frag"), Shader.FRAGMENT);
         try {
-            lightingProgram.link();
+            texturedProgram.link();
         } catch (LWJGLException e) {
             System.out.println(e.getMessage());
         }
-        shaderPrograms.addProgram("LightingTest", lightingProgram);
+        shaderPrograms.addProgram("Textured", texturedProgram);
     }
 
     @Override

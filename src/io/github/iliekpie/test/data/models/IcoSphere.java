@@ -1,9 +1,11 @@
-package io.github.iliekpie.test.data;
+package io.github.iliekpie.test.data.models;
 
 import io.github.iliekpie.bootstrap.graphics.Renderable;
 import io.github.iliekpie.bootstrap.graphics.ShaderProgram;
+import io.github.iliekpie.bootstrap.graphics.data.Texture;
 import io.github.iliekpie.bootstrap.graphics.data.Vertex;
 import io.github.iliekpie.test.MeshTessellator;
+import io.github.iliekpie.test.data.TestTexture;
 import org.lwjgl.util.vector.Vector3f;
 
 public class IcoSphere extends Renderable {

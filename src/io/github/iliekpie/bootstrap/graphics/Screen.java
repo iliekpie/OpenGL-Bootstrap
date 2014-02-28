@@ -50,7 +50,7 @@ public abstract class Screen {
         GL11.glClearColor(0.4f, 0.6f, 0.9f, 0.0f);
 
         GL11.glCullFace(GL11.GL_BACK);
-        GL11.glEnable(GL11.GL_CULL_FACE);
+        //GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
     }
 

@@ -1,10 +1,12 @@
-package io.github.iliekpie.test.data;
+package io.github.iliekpie.test.data.models;
 
+import io.github.iliekpie.bootstrap.graphics.data.Texture;
 import io.github.iliekpie.bootstrap.util.Color;
 import io.github.iliekpie.bootstrap.graphics.Renderable;
 import io.github.iliekpie.bootstrap.graphics.ShaderProgram;
 import io.github.iliekpie.bootstrap.graphics.data.Vertex;
 import io.github.iliekpie.test.MeshTessellator;
+import io.github.iliekpie.test.data.TestTexture;
 import org.lwjgl.util.vector.Vector3f;
 
 public class QuadCube extends Renderable {
@@ -13,28 +15,39 @@ public class QuadCube extends Renderable {
     public QuadCube(float radius, ShaderProgram program) {
         super(program);
         this.radius = radius;
-        mesh.setMaterial(new TestMaterial());
+        mesh.setTexture(new TestTexture(), Texture.TEXTURE);
         buildMesh();
     }
 
     private void buildMesh() {
         addCube();
         MeshTessellator tessellator = new MeshTessellator();
-        mesh = tessellator.subdivide(mesh, 5);
-        toSphere();
+        //mesh = tessellator.subdivide(mesh, 5);
+        //toSphere();
         mesh.calculateNormals();
     }
 
     private void addCube() {
-        short topLeftFront      = mesh.addVertex(new Vertex().setXYZ(1, 1, -1).setUV(0, 256));
-        short topRightFront     = mesh.addVertex(new Vertex().setXYZ(-1, 1, -1).setUV(256, 0));
-        short bottomLeftFront   = mesh.addVertex(new Vertex().setXYZ(1, -1, -1).setUV(0, 256));
-        short bottomRightFront  = mesh.addVertex(new Vertex().setXYZ(-1, -1, -1).setUV(1, 256));
+        //i think my mapping/vertex descriptions are off.
+        short topLeftFront      = mesh.addVertex(new Vertex().setXYZ(1, 1, -1).setUV(0, 1));
+        short topRightFront     = mesh.addVertex(new Vertex().setXYZ(-1, 1, -1).setUV(1, 0));
+        short bottomLeftFront   = mesh.addVertex(new Vertex().setXYZ(1, -1, -1).setUV(0, 1));
+        short bottomRightFront  = mesh.addVertex(new Vertex().setXYZ(-1, -1, -1).setUV(1, 1));
 
         short topLeftBack       = mesh.addVertex(new Vertex().setXYZ(1, 1, 1).setUV(0, 0));
-        short topRightBack      = mesh.addVertex(new Vertex().setXYZ(-1, 1, 1).setUV(256, 0));
-        short bottomLeftBack    = mesh.addVertex(new Vertex().setXYZ(-1, -1, 1).setUV(0, 256));
-        short bottomRightBack   = mesh.addVertex(new Vertex().setXYZ(1, -1, 1).setUV(256, 256));
+        short topRightBack      = mesh.addVertex(new Vertex().setXYZ(-1, 1, 1).setUV(1, 0));
+        short bottomLeftBack    = mesh.addVertex(new Vertex().setXYZ(-1, -1, 1).setUV(0, 1));
+        short bottomRightBack   = mesh.addVertex(new Vertex().setXYZ(1, -1, 1).setUV(1, 1));
+
+        /*short topLeftFront      = mesh.addVertex(new Vertex().setXYZ(1, 1, -1).setUV(0, 1));
+        short topRightFront     = mesh.addVertex(new Vertex().setXYZ(-1, 1, -1).setUV(1, 1));
+        short bottomLeftFront   = mesh.addVertex(new Vertex().setXYZ(1, -1, -1).setUV(0, 0));
+        short bottomRightFront  = mesh.addVertex(new Vertex().setXYZ(-1, -1, -1).setUV(1, 0));
+
+        short topLeftBack       = mesh.addVertex(new Vertex().setXYZ(1, 1, 1));
+        short topRightBack      = mesh.addVertex(new Vertex().setXYZ(-1, 1, 1));
+        short bottomLeftBack    = mesh.addVertex(new Vertex().setXYZ(-1, -1, 1));
+        short bottomRightBack   = mesh.addVertex(new Vertex().setXYZ(1, -1, 1));*/
 
         //back
         mesh.addTriangle(bottomLeftBack, bottomRightBack, topLeftBack);

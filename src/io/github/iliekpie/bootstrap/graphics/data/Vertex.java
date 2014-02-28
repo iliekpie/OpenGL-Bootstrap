@@ -4,7 +4,6 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-//TODO: Refactor to allow textures/normals?
 public class Vertex {
     //Vertex data
     protected Vector4f position = new Vector4f();

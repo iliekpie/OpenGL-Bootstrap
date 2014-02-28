@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-public class Texture {
+public abstract class Texture {
     private ByteBuffer data;
     int height = 0;
     int width = 0;
@@ -39,4 +39,8 @@ public class Texture {
     public int getWidth() {
         return width;
     }
+
+    public static final int TEXTURE = 0;
+    public static final int NORMAL_MAP = 1;
+    public static final int HEIGHT_MAP = 2;
 }
