@@ -54,9 +54,8 @@ public class MeshRenderer {
 
     // TODO: do not limit to vertex, normal, and uv?
     private void bindVertexBuffer(FloatBuffer vertexBuffer) {
-        vertexLocation = shaderProgram.getAttributeLocation("in_VertexPosition");
+        vertexLocation = shaderProgram.getAttributeLocation("in_Position");
         normalLocation = shaderProgram.getAttributeLocation("in_Normal");
-        //UV broken.
         texCoordLocation = shaderProgram.getAttributeLocation("in_UV");
 
         //Create and select a VBO.

@@ -3,6 +3,7 @@ package io.github.iliekpie.bootstrap.graphics.data;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Mesh {
@@ -103,6 +104,11 @@ public class Mesh {
                 null).normalise();
     }
 
+    public void invert() {
+        Collections.reverse(indices);
+    }
+
+    //todo: change to material system (specularity, etc)
     public void setTexture(Texture texture, int type) {
         this.textures[type] = texture;
     }

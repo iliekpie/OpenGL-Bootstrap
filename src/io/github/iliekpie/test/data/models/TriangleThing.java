@@ -10,7 +10,9 @@ import io.github.iliekpie.test.data.TestTexture;
 public class TriangleThing extends Renderable {
     public TriangleThing(ShaderProgram program) {
         super(program);
-        mesh.setTexture(new TestTexture(), Texture.TEXTURE);
+        Texture triangle = new Texture();
+        triangle.loadTexture("textures/tetrahedron.png");
+        mesh.setTexture(triangle, Texture.TEXTURE);
         buildMesh();
     }
 

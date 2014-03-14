@@ -2,8 +2,13 @@ package io.github.iliekpie.bootstrap.graphics;
 
 import io.github.iliekpie.bootstrap.graphics.data.Mesh;
 import io.github.iliekpie.bootstrap.util.Transformation;
+import io.github.iliekpie.test.MeshTessellator;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+
+import java.nio.FloatBuffer;
 
 /**
  * This class is extended to all renderable objects.
@@ -13,6 +18,7 @@ public abstract class Renderable {
     protected Mesh mesh;
     protected MeshRenderer renderer;
     private boolean bound = false;
+    private final FloatBuffer normalBuffer = BufferUtils.createFloatBuffer(3 * 3);
 
     protected Matrix4f modelMatrix = new Matrix4f();
 
@@ -24,7 +30,7 @@ public abstract class Renderable {
 
     /**
      * Renders the mesh - if it isn't bound yet, load it and then draw it.
-     * This allows us to generate the mesh in the constructor of the subclass without .
+     * This allows us to generate the mesh in the constructor of the subclass without a shader program.
      */
     public void draw(int type) {
         if(!bound) {

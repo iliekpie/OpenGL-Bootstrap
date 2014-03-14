@@ -7,7 +7,9 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.GL40;
+import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -162,20 +164,51 @@ public class ShaderProgram {
     }
 
     /**
-     * Sets the uniform at the specified location to a 4x4 matrix.
-     * @param location The uniform (mat4)'s location
-     * @param transpose If the matrix should be transposed
+     * Sets the uniform associated with the identifier to a 4x4 matrix.
+     * @param uniformName The name of the uniform (mat4)
      * @param matrix The matrix to be passed
      */
-    public void setUniformMatrix(int location, boolean transpose, Matrix4f matrix){
-        if (location == -1) return;
+    public void setUniform(String uniformName, Matrix4f matrix){
         if (matrix44Buffer == null){
             matrix44Buffer = BufferUtils.createFloatBuffer(16);
         }
         matrix44Buffer.clear();
         matrix.store(matrix44Buffer);
         matrix44Buffer.flip();
-        GL20.glUniformMatrix4(location, transpose, matrix44Buffer);
+        GL20.glUniformMatrix4(getUniformLocation(uniformName), false, matrix44Buffer);
+    }
+
+    /**
+     * Sets the uniform associated with the identifier to a 3x3 matrix.
+     * @param uniformName The name of the uniform (mat3)
+     * @param matrix The matrix to be passed
+     */
+    public void setUniform(String uniformName, Matrix3f matrix){
+        if (matrix44Buffer == null){
+            matrix44Buffer = BufferUtils.createFloatBuffer(16);
+        }
+        matrix44Buffer.clear();
+        matrix.store(matrix44Buffer);
+        matrix44Buffer.flip();
+        GL20.glUniformMatrix3(getUniformLocation(uniformName), false, matrix44Buffer);
+    }
+
+    /**
+     * Sets the uniform associated with the identifier to a vector3f.
+     * @param uniformName The name of the uniform (vec3)
+     * @param vector The vector to be passed
+     */
+    public void setUniform(String uniformName, Vector3f vector){
+        GL20.glUniform3f(getUniformLocation(uniformName), vector.getX(), vector.getY(), vector.getZ());
+    }
+
+    /**
+     * Sets the uniform associated with the identifier to a float
+     * @param uniformName The name of the uniform (float)
+     * @param number The float to be passed
+     */
+    public void setUniform(String uniformName, float number) {
+        GL20.glUniform1f(getUniformLocation(uniformName), number);
     }
 
     /**

@@ -1,19 +1,13 @@
 package io.github.iliekpie.bootstrap.graphics.data;
 
-import de.matthiasmann.twl.utils.PNGDecoder;
-
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
+import io.github.iliekpie.bootstrap.util.Color;
 
 public class Material {
-    protected Texture texture = new Texture();
+    private Texture texture = new NullTexture();
+    private float shininess = 80.0f; //80% of the light is reflected
+    private Color baseColor = new Color(255, 255, 255); //Specular (highlight) color
 
-    public void setTexture(Texture texture) {
-        this.texture = texture;
-    }
+    public Material(){
 
-    public Texture getTexture() {
-        return texture;
     }
 }

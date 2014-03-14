@@ -5,9 +5,11 @@ import io.github.iliekpie.bootstrap.graphics.Screen;
 import io.github.iliekpie.bootstrap.graphics.ShaderProgram;
 import io.github.iliekpie.bootstrap.graphics.data.Shader;
 import io.github.iliekpie.bootstrap.util.FileUtils;
+import io.github.iliekpie.bootstrap.util.MatrixUtils;
 import io.github.iliekpie.test.data.models.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -19,8 +21,8 @@ public class GameScreen extends Screen {
 
     public GameScreen(int width, int height) {
         super(width, height, "test");
-        //TODO: switch to scene/level class
-        shaderPrograms.setActiveProgram("BasicRender");
+        //TODO: switch to scene/level class, clunky shader program handling
+        shaderPrograms.setActiveProgram("LightingTest");
         camera.moveTo(new Vector3f(0, 0f, 7.0f));
         Renderable quadcube = new QuadCube(4, shaderPrograms.getActiveProgram());
         quadcube.transform(new Vector3f(6, 0, 0), new Vector3f());
@@ -36,27 +38,34 @@ public class GameScreen extends Screen {
     }
 
     protected void render() {
-        shaderPrograms.setActiveProgram("Textured");
+        shaderPrograms.setActiveProgram("LightingTest");
         drawRenderables(GL11.GL_TRIANGLES);
         shaderPrograms.setActiveProgram("NormalVisualization");
         drawRenderables(GL11.GL_POINTS);
     }
 
     private void drawRenderables(int type) {
-        shaderPrograms.getActiveProgram().use();
+        ShaderProgram activeShader = shaderPrograms.getActiveProgram();
+        activeShader.use();
+        activeShader.setUniform("lightPos", new Vector3f(0, -3, 2));
         for (Renderable renderable : renderables) {
-            shaderPrograms.getActiveProgram().setUniformMatrix(
-                    shaderPrograms.getActiveProgram().getUniformLocation("MVP"),
-                    false,
+            activeShader.setUniform("MVP",
                     Matrix4f.mul(
                             camera.getCombinedMatrix(),
                             renderable.getModelMatrix(),
                             null
                     )
             );
+            activeShader.setUniform("normalMatrix",
+                    MatrixUtils.getNormalMatrix(
+                            renderable.getModelMatrix(),
+                            camera.getViewMatrix()
+                    )
+            );
+            activeShader.setUniform("modelMatrix", renderable.getModelMatrix());
             renderable.draw(type);
         }
-        shaderPrograms.getActiveProgram().disable();
+        activeShader.disable();
     }
 
     protected void tick(float delta) {
@@ -95,6 +104,16 @@ public class GameScreen extends Screen {
             System.out.println(e.getMessage());
         }
         shaderPrograms.addProgram("Textured", texturedProgram);
+
+        ShaderProgram lightingProgram = new ShaderProgram();
+        lightingProgram.addShader(FileUtils.loadFile("shaders/render/LightingTest.vert"), Shader.VERTEX);
+        lightingProgram.addShader(FileUtils.loadFile("shaders/render/LightingTest.frag"), Shader.FRAGMENT);
+        try {
+            lightingProgram.link();
+        } catch (LWJGLException e) {
+            System.out.println(e.getMessage());
+        }
+        shaderPrograms.addProgram("LightingTest", lightingProgram);
     }
 
     @Override

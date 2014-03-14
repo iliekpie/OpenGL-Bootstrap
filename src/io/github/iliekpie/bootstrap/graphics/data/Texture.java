@@ -1,12 +1,13 @@
 package io.github.iliekpie.bootstrap.graphics.data;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
+import org.lwjgl.BufferUtils;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-public abstract class Texture {
+public class Texture {
     private ByteBuffer data;
     int height = 0;
     int width = 0;
@@ -18,7 +19,7 @@ public abstract class Texture {
             height = decoder.getHeight();
             width = decoder.getWidth();
 
-            data = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
+            data = BufferUtils.createByteBuffer(4 * decoder.getWidth() * decoder.getHeight());
             decoder.decode(data, decoder.getWidth()*4, PNGDecoder.Format.RGBA);
             data.flip();
 

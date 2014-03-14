@@ -6,9 +6,9 @@ import org.lwjgl.util.vector.Vector4f;
 
 public class Vertex {
     //Vertex data
-    protected Vector4f position = new Vector4f();
-    protected Vector3f normal = new Vector3f();
-    protected Vector2f uv = new Vector2f();
+    protected Vector4f position = new Vector4f(0, 0, 0, 1);
+    protected Vector3f normal = new Vector3f(0, 0, 0);
+    protected Vector2f uv = new Vector2f(0, 0);
 
     //Element size in bytes
     public static final int elementBytes = 4;
