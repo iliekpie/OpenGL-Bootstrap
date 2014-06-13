@@ -2,10 +2,10 @@ package io.github.iliekpie.test.data.models;
 
 import io.github.iliekpie.bootstrap.graphics.Renderable;
 import io.github.iliekpie.bootstrap.graphics.ShaderProgram;
-import io.github.iliekpie.bootstrap.graphics.data.Texture;
+import io.github.iliekpie.bootstrap.graphics.data.Mesh;
 import io.github.iliekpie.bootstrap.graphics.data.Vertex;
 import io.github.iliekpie.test.MeshTessellator;
-import io.github.iliekpie.test.data.TestTexture;
+import io.github.iliekpie.test.data.TestMaterial;
 import org.lwjgl.util.vector.Vector3f;
 
 public class IcoSphere extends Renderable {
@@ -14,33 +14,35 @@ public class IcoSphere extends Renderable {
     public IcoSphere(float radius, ShaderProgram program) {
         super(program);
         this.radius = radius;
+        model.setMaterial(new TestMaterial());
         buildMesh();
     }
 
     private void buildMesh() {
         addIsocahedron();
         MeshTessellator tessellator = new MeshTessellator();
-        mesh = tessellator.subdivide(mesh, 3);
+        model.setMesh(tessellator.subdivide(model.getMesh(), 3));
         toSphere(radius);
-        mesh.calculateNormals();
+        model.getMesh().calculateNormals();
     }
 
     private void addIsocahedron() {
-        final float x = 0.525731f;
-        final float z = 0.850651f;
+        Mesh mesh = model.getMesh();
+        final float s = 0.525731f;
+        final float t = 0.850651f;
 
-        short v0 = mesh.addVertex(new Vertex().setXYZ(-z, -x, 0));
-        short v1 = mesh.addVertex(new Vertex().setXYZ(z, -x, 0));
-        short v2 = mesh.addVertex(new Vertex().setXYZ(-z, x, 0));
-        short v3 = mesh.addVertex(new Vertex().setXYZ(z, x, 0));
-        short v4 = mesh.addVertex(new Vertex().setXYZ(0, -z, -x));
-        short v5 = mesh.addVertex(new Vertex().setXYZ(0, -z, x));
-        short v6 = mesh.addVertex(new Vertex().setXYZ(0, z, -x));
-        short v7 = mesh.addVertex(new Vertex().setXYZ(0, z, x));
-        short v8 = mesh.addVertex(new Vertex().setXYZ(x, 0, -z));
-        short v9 = mesh.addVertex(new Vertex().setXYZ(-x, 0, -z));
-        short v10 = mesh.addVertex(new Vertex().setXYZ(x, 0, z));
-        short v11 = mesh.addVertex(new Vertex().setXYZ(-x, 0, z));
+        short v0 = mesh.addVertex(new Vertex().setXYZ(-t, -s, 0));
+        short v1 = mesh.addVertex(new Vertex().setXYZ(t, -s, 0));
+        short v2 = mesh.addVertex(new Vertex().setXYZ(-t, s, 0));
+        short v3 = mesh.addVertex(new Vertex().setXYZ(t, s, 0));
+        short v4 = mesh.addVertex(new Vertex().setXYZ(0, -t, -s));
+        short v5 = mesh.addVertex(new Vertex().setXYZ(0, -t, s));
+        short v6 = mesh.addVertex(new Vertex().setXYZ(0, t, -s));
+        short v7 = mesh.addVertex(new Vertex().setXYZ(0, t, s));
+        short v8 = mesh.addVertex(new Vertex().setXYZ(s, 0, -t));
+        short v9 = mesh.addVertex(new Vertex().setXYZ(-s, 0, -t));
+        short v10 = mesh.addVertex(new Vertex().setXYZ(s, 0, t));
+        short v11 = mesh.addVertex(new Vertex().setXYZ(-s, 0, t));
 
         mesh.addTriangle(v0, v9, v4);
         mesh.addTriangle(v6, v9, v2);
@@ -66,7 +68,7 @@ public class IcoSphere extends Renderable {
 
     // Creates a scaled unit sphere
     private void toSphere(float radius) {
-        for (Vertex vertex : mesh.getVertices()) {
+        for (Vertex vertex : model.getMesh().getVertices()) {
             Vector3f position = vertex.getPosition();
             position.normalise().scale(radius);
             vertex.setPosition(position);

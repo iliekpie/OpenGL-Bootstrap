@@ -2,17 +2,21 @@ package io.github.iliekpie.test.data.models;
 
 import io.github.iliekpie.bootstrap.graphics.Renderable;
 import io.github.iliekpie.bootstrap.graphics.ShaderProgram;
+import io.github.iliekpie.bootstrap.graphics.data.Material;
+import io.github.iliekpie.bootstrap.graphics.data.Mesh;
 import io.github.iliekpie.bootstrap.graphics.data.Texture;
 import io.github.iliekpie.bootstrap.graphics.data.Vertex;
+import io.github.iliekpie.bootstrap.util.Color;
 import io.github.iliekpie.test.MeshTessellator;
-import io.github.iliekpie.test.data.TestTexture;
 
 public class TriangleThing extends Renderable {
     public TriangleThing(ShaderProgram program) {
         super(program);
-        Texture triangle = new Texture();
-        triangle.loadTexture("textures/tetrahedron.png");
-        mesh.setTexture(triangle, Texture.TEXTURE);
+        model.setMaterial(new Material(
+                new Texture().loadTexture("textures/tetrahedron.png"),
+                0.8f,
+                new Color(255, 255, 255)
+        ));
         buildMesh();
     }
 
@@ -20,10 +24,11 @@ public class TriangleThing extends Renderable {
         addTriangle();
         MeshTessellator tessellator = new MeshTessellator();
         //mesh = tessellator.subdivide(mesh, 5);
-        mesh.calculateNormals();
+        model.getMesh().calculateNormals();
     }
 
     private void addTriangle() {
+        Mesh mesh = model.getMesh();
         short v0 = mesh.addVertex(new Vertex().setXYZ(0, 0, 0).setUV(0, 0));
         short v1 = mesh.addVertex(new Vertex().setXYZ(1, 0, 0).setUV(1, 0));
         short v2 = mesh.addVertex(new Vertex().setXYZ(0.5f, 0, (float) Math.sqrt(0.75)).setUV(0, 1));

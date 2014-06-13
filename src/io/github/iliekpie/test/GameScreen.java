@@ -63,6 +63,7 @@ public class GameScreen extends Screen {
                     )
             );
             activeShader.setUniform("modelMatrix", renderable.getModelMatrix());
+
             renderable.draw(type);
         }
         activeShader.disable();

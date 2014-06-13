@@ -4,11 +4,15 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class Interpolation {
-    public static Vector2f linear(Vector2f v0, Vector2f v1, float alpha) {
-        return Vector2f.add(v0, (Vector2f) Vector2f.sub(v1, v0, null).scale(alpha), null);
+    public static float linear(float naught, float prime, float alpha) {
+        return naught + (prime - naught) * alpha;
     }
 
-    public static Vector3f linear(Vector3f v0, Vector3f v1, float alpha) {
-        return Vector3f.add(v0, (Vector3f) Vector3f.sub(v1, v0, null).scale(alpha), null);
+    public static Vector2f linear(Vector2f naught, Vector2f prime, float alpha) {
+        return Vector2f.add(naught, (Vector2f) Vector2f.sub(prime, naught, null).scale(alpha), null);
+    }
+
+    public static Vector3f linear(Vector3f naught, Vector3f prime, float alpha) {
+        return Vector3f.add(naught, (Vector3f) Vector3f.sub(prime, naught, null).scale(alpha), null);
     }
 }

@@ -1,12 +1,11 @@
 package io.github.iliekpie.test.data.models;
 
-import io.github.iliekpie.bootstrap.graphics.data.Texture;
-import io.github.iliekpie.bootstrap.util.Color;
+import io.github.iliekpie.bootstrap.graphics.data.BlankMaterial;
 import io.github.iliekpie.bootstrap.graphics.Renderable;
 import io.github.iliekpie.bootstrap.graphics.ShaderProgram;
+import io.github.iliekpie.bootstrap.graphics.data.Mesh;
 import io.github.iliekpie.bootstrap.graphics.data.Vertex;
 import io.github.iliekpie.test.MeshTessellator;
-import io.github.iliekpie.test.data.TestTexture;
 import org.lwjgl.util.vector.Vector3f;
 
 public class QuadCube extends Renderable {
@@ -15,29 +14,30 @@ public class QuadCube extends Renderable {
     public QuadCube(float radius, ShaderProgram program) {
         super(program);
         this.radius = radius;
-        mesh.setTexture(new TestTexture(), Texture.TEXTURE);
+        model.setMaterial(new BlankMaterial());
         buildMesh();
     }
 
     private void buildMesh() {
         addCube();
         MeshTessellator tessellator = new MeshTessellator();
-        //mesh = tessellator.subdivide(mesh, 5);
+        //model = tessellator.subdivide(model, 5);
         //toSphere();
-        mesh.calculateNormals();
+        model.getMesh().calculateNormals();
     }
 
     private void addCube() {
         //i think my mapping/vertex descriptions are off.
-        short topLeftFront      = mesh.addVertex(new Vertex().setXYZ(1, 1, -1).setUV(0, 1));
-        short topRightFront     = mesh.addVertex(new Vertex().setXYZ(-1, 1, -1).setUV(1, 0));
-        short bottomLeftFront   = mesh.addVertex(new Vertex().setXYZ(1, -1, -1).setUV(0, 1));
-        short bottomRightFront  = mesh.addVertex(new Vertex().setXYZ(-1, -1, -1).setUV(1, 1));
+        Mesh mesh = model.getMesh();
+        short topLeftFront = mesh.addVertex(new Vertex().setXYZ(1, 1, -1).setUV(0, 1));
+        short topRightFront = mesh.addVertex(new Vertex().setXYZ(-1, 1, -1).setUV(1, 0));
+        short bottomLeftFront = mesh.addVertex(new Vertex().setXYZ(1, -1, -1).setUV(0, 1));
+        short bottomRightFront = mesh.addVertex(new Vertex().setXYZ(-1, -1, -1).setUV(1, 1));
 
-        short topLeftBack       = mesh.addVertex(new Vertex().setXYZ(1, 1, 1).setUV(0, 0));
-        short topRightBack      = mesh.addVertex(new Vertex().setXYZ(-1, 1, 1).setUV(1, 0));
-        short bottomLeftBack    = mesh.addVertex(new Vertex().setXYZ(-1, -1, 1).setUV(0, 1));
-        short bottomRightBack   = mesh.addVertex(new Vertex().setXYZ(1, -1, 1).setUV(1, 1));
+        short topLeftBack = mesh.addVertex(new Vertex().setXYZ(1, 1, 1).setUV(0, 0));
+        short topRightBack = mesh.addVertex(new Vertex().setXYZ(-1, 1, 1).setUV(1, 0));
+        short bottomLeftBack = mesh.addVertex(new Vertex().setXYZ(-1, -1, 1).setUV(0, 1));
+        short bottomRightBack = mesh.addVertex(new Vertex().setXYZ(1, -1, 1).setUV(1, 1));
 
         /*short topLeftFront      = mesh.addVertex(new Vertex().setXYZ(1, 1, -1).setUV(0, 1));
         short topRightFront     = mesh.addVertex(new Vertex().setXYZ(-1, 1, -1).setUV(1, 1));
@@ -60,7 +60,7 @@ public class QuadCube extends Renderable {
         //left
         mesh.addTriangle(bottomRightBack, bottomLeftFront, topLeftFront);
         mesh.addTriangle(bottomRightBack, topLeftFront, topLeftBack);
-        
+
         //right
         mesh.addTriangle(bottomRightFront, bottomLeftBack, topRightBack);
         mesh.addTriangle(bottomRightFront, topRightBack, topRightFront);
@@ -76,7 +76,7 @@ public class QuadCube extends Renderable {
 
     // Creates a scaled unit sphere
     private void toSphere() {
-        for (Vertex vertex : mesh.getVertices()) {
+        for (Vertex vertex : model.getMesh().getVertices()) {
             Vector3f position = vertex.getPosition();
             position.normalise().scale(radius);
             vertex.setPosition(position);

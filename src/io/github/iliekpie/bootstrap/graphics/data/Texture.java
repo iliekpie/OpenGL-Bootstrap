@@ -12,7 +12,11 @@ public class Texture {
     int height = 0;
     int width = 0;
 
-    public void loadTexture(String path) {
+    public Texture() {
+
+    }
+
+    public Texture loadTexture(String path) {
         try {
             InputStream in = new FileInputStream(path);
             PNGDecoder decoder = new PNGDecoder(in);
@@ -27,6 +31,8 @@ public class Texture {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
+        return this;
     }
 
     public ByteBuffer getData() {
@@ -41,7 +47,7 @@ public class Texture {
         return width;
     }
 
-    public static final int TEXTURE = 0;
-    public static final int NORMAL_MAP = 1;
-    public static final int HEIGHT_MAP = 2;
+    public enum MapType {
+        COLOR, NORMAL, SPECULAR, HEIGHT;
+    }
 }

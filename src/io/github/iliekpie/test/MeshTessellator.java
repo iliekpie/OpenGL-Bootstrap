@@ -2,19 +2,20 @@ package io.github.iliekpie.test;
 
 import io.github.iliekpie.bootstrap.graphics.data.Mesh;
 import io.github.iliekpie.bootstrap.graphics.data.Vertex;
-import io.github.iliekpie.bootstrap.util.Interpolation;
-import org.lwjgl.util.vector.Vector3f;
 
 public class MeshTessellator {
     private Mesh tempMesh = new Mesh();
 
-    private short getSubVertex(Vertex v1, Vertex v2) {
+    /*private short getSubVertex(Vertex v1, Vertex v2) {
         Vector3f subVector = Vector3f.add(v1.getPosition(), v2.getPosition(), null);
         subVector.scale(0.5f);
         return tempMesh.addVertex(
                 new Vertex().setPosition(subVector)
                         .setUV(Interpolation.linear(v1.getTexCoords(), v2.getTexCoords(), 0.5f))
         );
+    }*/
+    private short addSubVertex(Vertex v1, Vertex v2) {
+        return tempMesh.addVertex(Vertex.interpolate(v1, v2, 0.5f));
     }
 
     /**
@@ -38,10 +39,9 @@ public class MeshTessellator {
      * @return Tessellated mesh
      */
     public Mesh subdivide(Mesh mesh) {
-        tempMesh = new Mesh();
-        tempMesh.setVertices(mesh.getVertices());
-        tempMesh.setTextures(mesh.getTextures());
-        short[] indices = mesh.getIndices();
+        tempMesh = new Mesh(mesh);
+        tempMesh.getIndices().clear();
+        short[] indices = mesh.getIndexArray();
 
         // for each triangle, create 4
         for (int i = 0; i < indices.length; i += 3) {
@@ -49,9 +49,9 @@ public class MeshTessellator {
             short i2 = indices[i + 1];
             short i3 = indices[i + 2];
 
-            short a = getSubVertex(mesh.getVertex(i1), mesh.getVertex(i2));
-            short b = getSubVertex(mesh.getVertex(i2), mesh.getVertex(i3));
-            short c = getSubVertex(mesh.getVertex(i3), mesh.getVertex(i1));
+            short a = addSubVertex(mesh.getVertex(i1), mesh.getVertex(i2));
+            short b = addSubVertex(mesh.getVertex(i2), mesh.getVertex(i3));
+            short c = addSubVertex(mesh.getVertex(i3), mesh.getVertex(i1));
 
             tempMesh.addTriangle(i1, a, c);
             tempMesh.addTriangle(a, i2, b);

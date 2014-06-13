@@ -1,10 +1,8 @@
 package io.github.iliekpie.bootstrap.graphics;
 
-import io.github.iliekpie.bootstrap.graphics.data.Mesh;
+import io.github.iliekpie.bootstrap.graphics.data.Model;
 import io.github.iliekpie.bootstrap.util.Transformation;
-import io.github.iliekpie.test.MeshTessellator;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -15,16 +13,16 @@ import java.nio.FloatBuffer;
  * It contains the mesh and the renderer.
  */
 public abstract class Renderable {
-    protected Mesh mesh;
-    protected MeshRenderer renderer;
+    protected Model model;
+    protected ModelRenderer renderer;
     private boolean bound = false;
     private final FloatBuffer normalBuffer = BufferUtils.createFloatBuffer(3 * 3);
 
     protected Matrix4f modelMatrix = new Matrix4f();
 
     public Renderable(ShaderProgram shaderProgram) {
-        mesh = new Mesh();
-        renderer = new MeshRenderer();
+        model = new Model();
+        renderer = new ModelRenderer();
         renderer.bind(shaderProgram);
     }
 
@@ -34,7 +32,7 @@ public abstract class Renderable {
      */
     public void draw(int type) {
         if(!bound) {
-            renderer.loadMesh(mesh);
+            renderer.loadModel(model);
             bound = true;
         }
         renderer.draw(type);

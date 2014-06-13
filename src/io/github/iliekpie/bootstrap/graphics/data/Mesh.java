@@ -4,26 +4,32 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 public class Mesh {
-    private List<Vertex> vertices = new ArrayList<Vertex>(256);
+
+    private List<Vertex> vertices = new ArrayList<Vertex>(512);
     private List<Short> indices = new ArrayList<Short>(4096);
-    private Texture[] textures = new Texture[]{ new NullTexture(), null, null };
+
+    private EnumSet<Vertex.Component> components = EnumSet.allOf(Vertex.Component.class);
 
     public Mesh() {
 
     }
 
-    public Mesh(Mesh instance) {
-        this.vertices = instance.vertices;
-        this.indices = instance.indices;
-        this.textures = instance.textures;
+    public Mesh(EnumSet<Vertex.Component> components) {
+        this.components = EnumSet.copyOf(components);
+    }
+
+    public Mesh(Mesh mesh) {
+        this.vertices = new ArrayList<Vertex>(mesh.vertices);
+        this.components = EnumSet.copyOf(mesh.components);
     }
 
     public short[] addVertices(Vertex[] vertices) {
         short[] vertexIDs = new short[vertices.length];
-        for(int i = 0; i < vertices.length; i++) {
+        for (int i = 0; i < vertices.length; i++) {
             vertexIDs[i] = addVertex(vertices[i]);
         }
         return vertexIDs;
@@ -32,15 +38,16 @@ public class Mesh {
     /**
      * Adds the vertex to the mesh.
      * Attempts to reduce vertex duplicates by only adding new vertices if they do not already exist.
+     *
      * @param vertex Vertex to be added
      * @return Index of the vertex
      */
     public short addVertex(Vertex vertex) {
-        if(vertices.contains(vertex)) {
-            return (short)vertices.indexOf(vertex);
+        if (vertices.contains(vertex)) {
+            return (short) vertices.indexOf(vertex);
         }
         vertices.add(vertex);
-        return (short)(vertices.size()-1); //Last element of the list should be the new vertex's index.
+        return (short) (vertices.size() - 1); //Last element of the list should be the new vertex's index.
     }
 
     // Overwrite all vertices
@@ -50,6 +57,7 @@ public class Mesh {
 
     /**
      * Adds the triangle's 3 vertices to the index list.
+     *
      * @param v1 Vertex 1
      * @param v2 Vertex 2
      * @param v3 Vertex 3
@@ -68,14 +76,18 @@ public class Mesh {
         return vertices.get(index);
     }
 
-    public short[] getIndices() {
+    public short[] getIndexArray() {
         short[] tempIndices = new short[indices.size()];
 
-        for(int i=0; i < indices.size(); i++) {
+        for (int i = 0; i < indices.size(); i++) {
             tempIndices[i] = indices.get(i);
         }
 
         return tempIndices;
+    }
+
+    public List<Short> getIndices() {
+        return indices;
     }
 
     public void calculateNormals() {
@@ -87,41 +99,39 @@ public class Mesh {
                     vertices.get(indices.get(i + 2))};
             Vector3f faceNormal = calculateFaceNormal(faceVertices[0], faceVertices[1], faceVertices[2]);
             for (Vertex vertex : faceVertices) {
-                Vector3f.add(vertex.normal, faceNormal, vertex.normal);
+                Vector3f.add(vertex.getNormal(), faceNormal, vertex.getNormal());
             }
         }
         for (Vertex vertex : vertices) {
-            if(vertex.normal.length() > 1) {
-                vertex.normal.normalise();
+            if (vertex.getNormal().length() > 1) {
+                vertex.getNormal().normalise();
             }
         }
     }
 
     private Vector3f calculateFaceNormal(Vertex A, Vertex B, Vertex C) {
-        return (Vector3f)Vector3f.cross(
+        return (Vector3f) Vector3f.cross(
                 Vector3f.sub(A.getPosition(), B.getPosition(), null),
                 Vector3f.sub(B.getPosition(), C.getPosition(), null),
                 null).normalise();
     }
 
+    /**
+     * Inverts the mesh's indices - useful for flipping normals/culling
+     */
     public void invert() {
         Collections.reverse(indices);
     }
 
-    //todo: change to material system (specularity, etc)
-    public void setTexture(Texture texture, int type) {
-        this.textures[type] = texture;
+    public EnumSet<Vertex.Component> getComponents() {
+        return components;
     }
 
-    public Texture getTexture(int type) {
-        return textures[type];
+    public boolean addComponent(Vertex.Component component) {
+        return components.add(component);
     }
 
-    public void setTextures(Texture[] textures) {
-        this.textures = textures;
-    }
-
-    public Texture[] getTextures() {
-        return new Texture[]{textures[0], textures[1], textures[2]};
+    public void setComponents(EnumSet<Vertex.Component> components) {
+        this.components = components;
     }
 }

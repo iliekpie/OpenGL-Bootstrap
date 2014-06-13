@@ -26,6 +26,13 @@ public class Color {
         setRGBA(convertRange(r), convertRange(g), convertRange(b), convertRange(a));
     }
 
+    public Color(Color color) {
+        this.red = color.red;
+        this.green = color.green;
+        this.blue = color.blue;
+        this.alpha = color.alpha;
+    }
+
     private float convertRange(int value) {
         return (float)value / 255.0f;
     }
@@ -88,15 +95,12 @@ public class Color {
      */
     public static Color interpolate(Color naught, Color prime, float alpha) {
         return new Color(
-            interpolate(naught.getRed(), prime.getRed(), alpha),
-            interpolate(naught.getGreen(), prime.getGreen(), alpha),
-            interpolate(naught.getBlue(), prime.getBlue(), alpha),
-            interpolate(naught.getAlpha(), prime.getAlpha(), alpha)
+            Interpolation.linear(naught.getRed(), prime.getRed(), alpha),
+            Interpolation.linear(naught.getGreen(), prime.getGreen(), alpha),
+            Interpolation.linear(naught.getBlue(), prime.getBlue(), alpha),
+            Interpolation.linear(naught.getAlpha(), prime.getAlpha(), alpha)
         );
     }
 
-    // Returns a linearly interpolated value - move into separate class?
-    private static float interpolate(float naught, float prime, float alpha) {
-        return naught + (prime - naught) * alpha;
-    }
+    public static Color EMPTY = new Color(0, 0, 0, 0);
 }

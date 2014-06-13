@@ -3,6 +3,7 @@ precision mediump float;    //don't need as high of a precision
 
 in vec3 pass_Position;      //camera space
 in vec3 pass_Normal;        //camera space
+in vec4 pass_Color;
 in vec2 pass_UV;
 
 out vec4 out_Color;
@@ -21,6 +22,6 @@ void main() {
     diffuse = diffuse * (1.0 / (1.0 + (0.25 * distance * distance)));
     diffuse = clamp(diffuse + 0.5, 0, 1);
 
-    //out_Color = vec4(diffuse, 0, 0, 1);
-    out_Color = texture(tSampler, pass_UV.st) * diffuse;
+    //out_Color = vec4(vec3(0.5, 0.5, 0.5)*diffuse, 1);
+    out_Color = texture(tSampler, pass_UV.st) * diffuse + pass_Color;
 }
